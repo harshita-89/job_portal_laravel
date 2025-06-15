@@ -74,11 +74,58 @@ class AccountController extends Controller
     }
     // this method will show user profile page
     public function profile(){
-        return view('front.account.profile');
+       
+        $id = Auth::user()->id;
+       
+        $user = User::where('id',$id)->first();
+        // dd($user);
+       
+        return view('front.account.profile',[
+            'user' => $user
+        ]);
     }
 
+    public function updateProfile(Request $request){
+        $id = Auth::user()->id;
+        $validator = Validator::make($request->all(),[
+
+            'name' => 'required|min:3|max:20',
+            'email' => 'required|email|unique:users,email,'.$id.',id' //required unique email, checks the email column for duplicate emails except the logged in user id
+        ]);
+
+        if($validator-> passes()){ // if validation passes updating the record
+
+            $user = User::find ($id);
+            $user->name = $request->name;
+            $user->email = $request->email;
+            $user->mobile = $request->mobile;
+            $user->designation = $request->designation;
+            $user->save();
+
+            session()->flash('success','Profile updated successfully');
+            
+            return redirect()->route('account.profile');
+            
+            // was redirecting the page to update-profile and showing the json reponse as answer
+            // return response()->json([
+            //     'status' => true,
+            //     'errors' => []
+            // ]);
+
+        } else{
+            return redirect()->route('account.profile')
+                     ->withErrors($validator)
+                     ->withInput();
+
+            // return response()->json([
+            //     'status' => false,
+            //     'errors' => $validator->errors()
+            // ]);
+        }
+    }
     public function logout(){
         Auth::logout();
         return redirect()->route('account.login');
     }
+    
 }

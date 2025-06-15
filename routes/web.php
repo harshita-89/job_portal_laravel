@@ -23,8 +23,10 @@ Route::group(['prefix' => 'account'], function(){
     //Authenticate routes                                                       
     Route::group(['middleware' => 'auth'], function () {
         Route::get('/profile', [AccountController::class, 'profile'])->name('account.profile');
-        // logout is not working
-        // Route::get('/logout', [AccountController::class, 'logout'])->name('account.logout');
+                
+        Route::put('/update-profile', [AccountController::class, 'updateProfile'])->name('account.updateProfile');
+        
+        // logout is not working in here
     });
     
     Route::get('/logout', [AccountController::class, 'logout'])->name('account.logout');
