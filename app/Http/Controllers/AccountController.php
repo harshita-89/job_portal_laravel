@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
+use App\Models\JobType;
 use App\Models\User;
 use Illuminate\support\Facades\File;
 use GuzzleHttp\Psr7\Response;
@@ -180,6 +182,39 @@ class AccountController extends Controller
     public function logout(){
         Auth::logout();
         return redirect()->route('account.login');
+    }
+
+    public function createJob(){
+        $categories = Category::orderBy('name', 'asc')->where('status','1')->get();
+        $jobTypes = JobType::orderBy('name','asc')->where('status','1')->get();
+
+        return view('front.account.job.create',[
+            'categories' => $categories,
+            'jobTypes' => $jobTypes,
+        ]);
+    }
+    public function storeJob(Request $request){
+      
+        $rules =[
+        'title' => 'required|min:5|max:200',
+        'category' => 'required',
+        'jobType' => 'required',
+        'vacancy' => 'required|integer',
+        'location' => 'required|max:50',
+        'description' => 'required',
+        'experience' => 'requiredmin:3|max:90',
+      ];
+      $validator =   Validator::make($request->all(),$rules);
+
+      if($validator->passes()){
+
+      } else{
+        return response()->json([
+            'status'=> false,
+            'errors' => $validator->errors()
+        ]);
+      }
+    
     }
     
 }
