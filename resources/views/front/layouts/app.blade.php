@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html class="no-js" lang="en_AU" />
+<html class="no-js" lang="en_AU" >
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 	<title>CareerVibe | Find Best Jobs</title>
@@ -13,6 +13,7 @@
     <link rel="stylesheet" type="text/css" href={{ asset('assets/css/style.css') }} />
 	<!-- Fav Icon -->
 	<link rel="shortcut icon" type="image/x-icon" href="#" />
+
 </head>
 <body data-instant-intensity="mousedown">
 <header>
@@ -38,7 +39,7 @@
 										
 				@endif
 
-				<a class="btn btn-primary" href="post-job.html" type="submit">Post a Job</a>
+				<a class="btn btn-primary" href="{{ route('account.createJob') }}" type="submit">Post a Job</a>
 			</div>
 		</div>
 	</nav>
@@ -119,6 +120,8 @@
 		})
 	})
 </script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 @yield('customJS')
 </body>
 </html>

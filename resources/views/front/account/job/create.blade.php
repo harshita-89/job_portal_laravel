@@ -19,15 +19,19 @@
             </div>
             <div class="col-lg-9">
             @include('front.layouts.message')
-            <form action="" method="POST" id="createJobForm">
-
+            <form action="{{ route('account.saveJob') }}" method="POST" id="createJobForm">
+             @csrf
                 <div class="card border-0 shadow mb-4 ">
                     <div class="card-body card-form p-4">
                         <h3 class="fs-4 mb-1">Job Details</h3>
+                        
                         <div class="row">
                             <div class="col-md-6 mb-4">
                                 <label for="" class="mb-2">Title<span class="req">*</span></label>
                                 <input type="text" placeholder="Job Title" id="title" name="title" class="form-control">
+                                @error('title')
+                                    <p class="invalid-feedback">{{ $message }}</p>                                
+                                @enderror
                             </div>
                             <div class="col-md-6  mb-4">
                                 <label for="" class="mb-2">Category<span class="req">*</span></label>
@@ -39,6 +43,9 @@
                                         @endforeach                                        
                                     @endif
                                 </select>
+                                @error('category')
+                                    <p class="invalid-feedback">{{ $message }}</p>                                
+                                @enderror
                             </div>
                         </div>
                             
@@ -53,10 +60,16 @@
                                         @endforeach                                    
                                     @endif
                                 </select>
+                                @error('jobType')
+                                    <p class="invalid-feedback">{{ $message }}</p>                                
+                                @enderror
                             </div>
                             <div class="col-md-6  mb-4">
                                 <label for="" class="mb-2">Vacancy<span class="req">*</span></label>
                                 <input type="number" min="1" placeholder="Vacancy" id="vacancy" name="vacancy" class="form-control">
+                                @error('vacancy')
+                                    <p class="invalid-feedback">{{ $message }}</p>                                
+                                @enderror
                             </div>
                         </div>
 
@@ -67,13 +80,19 @@
                             </div>
                             <div class="mb-4 col-md-6">
                                 <label for="" class="mb-2">Location<span class="req">*</span></label>
-                                <input type="text" placeholder="location" id="location" name="Location" class="form-control">
+                                <input type="text" placeholder="location" id="location" name="location" class="form-control">
+                                @error('location')
+                                    <p class="invalid-feedback">{{ $message }}</p>
+                                @enderror
                             </div>
                         </div>
 
                         <div class="mb-4">
                             <label for="" class="mb-2">Description<span class="req">*</span></label>
                             <textarea class="form-control" name="description" id="description" cols="5" rows="5" placeholder="Description"></textarea>
+                            @error('description')
+                                <p class="invalid-feedback">{{ $message }}</p>                                
+                            @enderror
                         </div>
                         <div class="mb-4">
                             <label for="" class="mb-2">Benefits</label>
@@ -104,6 +123,9 @@
                                 <option value="10">10 years</option>
                                 <option value="10_plus">10+ years</option>
                             </select>
+                            @error('experience')
+                                <p class="invalid-feedback">{{ $message }}</p>                                
+                            @enderror
                         </div>
 
                         <div class="mb-4">
@@ -118,93 +140,88 @@
                             <div class="mb-4 col-md-6">
                                 <label for="" class="mb-2">Name<span class="req">*</span></label>
                                 <input type="text" placeholder="Company Name" id="company_name" name="company_name" class="form-control">
+                                @error('company_name')
+                                    <p class="invalid-feedback">{{ $message }}</p>                                
+                                @enderror
                             </div>
                             <div class="mb-4 col-md-6">
                                 <label for="" class="mb-2">Location</label>
-                                <input type="text" placeholder="Location" id="location" name="location" class="form-control">
+                                <input type="text" placeholder="Location" id="company_location" name="company_location" class="form-control">
                             </div>
                         </div>
 
                         <div class="mb-4">
-                            <label for="" class="mb-2">Website</label>                            <input type="text" placeholder="Website" id="website" name="website" class="form-control">
+                            <label for="" class="mb-2">Website</label>                            
+                            <input type="text" placeholder="Website" id="website" name="website" class="form-control">
                         </div>
                     </div> 
                     <div class="card-footer  p-4">
-                        <button type="button" class="btn btn-primary">Save Job</button>
+                        <button type="submit" class="btn btn-primary">Save Job</button>
                     </div>               
                 </div>
-            </form>
-{{-- //hello --}}                
+            </form>               
             </div>
         </div>
     </div>
 </section>
 @endsection
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-@section('customJs')
-{{--  
-<script type="text/javascript">
+@section('customJS')
+<script>
+$(document).ready(function(){
+       console.log("Document ready");
+    $("#createJobForm").submit(function(e){
+        e.preventDefault();
+        console.log("Form submission intercepted");
 
-$("#userForm").submit(function(e){ //e=> event
-    e.preventDefault();  //wont reload the page on submitting
 
-    $.ajax({
-        url: '{{ route("account.updateProfile") }}',
-        type: 'put',
-        dataType: 'json', //expecting a json response
-        data: $("#userForm").serializeArray(),  //submit the whole form all together
-        success: function(response){
-            
-            if(response.status == true){
-                window.location.href= "{{ route('account.profile') }}";
+        let $btn = $(this).find('button[type="submit"]');
+        $btn.prop('disabled', true).text('Saving...');
 
-                $("#name").removeClass('is-invalid')
-                    .siblings('p')
-                    .removeClass('invalid-feedback')
-                    .html('')
-                $("#email").removeClass('is-invalid')
-                    .siblings('p')
-                    .removeClass('invalid-feedback')
-                    .html('')
-                
-                
-            
-            } else {
-                
-                var errors = response.errors;
-
-                if(errors.name){   //handles name field
-                    $("#name").addClass('is-invalid')
-                    .siblings('p')
-                    .addClass('invalid-feedback')
-                    .html(errors.name)
-                }
-                else{
-                    $("#name").removeClass('is-invalid')
-                    .siblings('p')
-                    .removeClass('invalid-feedback')
-                    .html('')
+        $.ajax({
+            url: '{{ route("account.saveJob") }}',
+            type: 'POST',
+            dataType: 'json',
+            data: $(this).serialize(),
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            success: function(response){
+                console.log("Response received", response);
+                if(response.status === true){
+                    window.location.href = response.redirect_url;
+                } else {
+                    handleErrors(response.errors);
                 }
 
-                if(errors.email){  //handles email field
-                    $("#email").addClass('is-invalid')
-                    .siblings('p')
-                    .addClass('invalid-feedback')
-                    .html(errors.email)
-                }
-                else{
-                    $("#email").removeClass('is-invalid')
-                    .siblings('p')
-                    .removeClass('invalid-feedback')
-                    .html('')
+                $btn.prop('disabled', false).text('Save Job');
+            },
+            error: function(xhr){
+                if (xhr.status === 422) {
+                    handleErrors(xhr.responseJSON.errors);
+                } else {
+                    console.log(xhr.responseText);
+                    alert('Unexpected error occurred.');
                 }
 
+                $btn.prop('disabled', false).text('Save Job');
             }
+        });
 
+        function handleErrors(errors){
+            $(".form-control").removeClass('is-invalid');
+            $(".invalid-feedback").remove();
+
+            $.each(errors, function(field, message){
+                let input = $(`[name="${field}"]`);
+                input.addClass('is-invalid');
+                if (input.siblings('.invalid-feedback').length === 0) {
+                    input.after(`<p class="invalid-feedback d-block">${message[0]}</p>`);
+                }
+            });
         }
     });
-
 });
 </script>
---}}
 @endsection
