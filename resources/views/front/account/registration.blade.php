@@ -44,13 +44,19 @@
 @section('customJS')
 <script>
 
+$.ajaxSetup({
+    headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    }
+});
+
 $("#registrationForm").submit(function(e){
     e.preventDefault();
 
     $.ajax({
         url: '{{ route("account.processRegistration")}}',
         type: 'POST',
-        data: $("#registrationForm").serializeArray(),
+        data: $(this).serializeArray(),
         dataType: 'json',
         success: function(response){
             if(response.status == false){

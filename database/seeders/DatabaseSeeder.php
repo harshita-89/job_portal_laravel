@@ -20,7 +20,9 @@ class DatabaseSeeder extends Seeder
         //     'email' => 'test@example.com',
         // ]);
         //running factories that insert dummy record in database
-        \App\Models\Category::factory(5)->create();
-        \App\Models\JobType::factory(5)->create();
+        // \App\Models\Category::factory(5)->create();
+        // \App\Models\JobType::factory(5)->create();
+        \App\Models\Job::factory(20)->create();
+
     }
 }

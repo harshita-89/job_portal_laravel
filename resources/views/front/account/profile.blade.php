@@ -81,7 +81,7 @@
 </section>
 @endsection
 
-@section('customJs')
+@section('customJS')
 {{--  
 <script type="text/javascript">
 

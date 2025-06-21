@@ -213,6 +213,7 @@ class AccountController extends Controller
             $job->title = $request->title;;
             $job->category_id = $request->category; //database has_id in name form has only name of the field
             $job->job_type_id = $request->jobType;
+            $job->user_id = Auth::id(); //assign the user id of logged in user
             $job->vacancy = $request->vacancy;
             $job->salary = $request->salary;
             $job->location = $request->location;
@@ -243,8 +244,11 @@ class AccountController extends Controller
     
     }
     public function myJobs(){
-        return view('front.account.job.my-Jobs');
-
+        $jobs = Job::where('user_id',Auth::user()->id)->with('jobType')->paginate(10);
+        
+        return view('front.account.job.my-Jobs', [
+            'jobs' => $jobs
+        ]);
     }
     
 }
